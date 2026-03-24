@@ -7,7 +7,6 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'counselor'){
 include 'db.php';
 $uid = $_SESSION['user_id'];
 
-// Status update
 if(isset($_POST['update_status'])){
     $eid = $_POST['enquiry_id'];
     $status = $_POST['status'];
@@ -27,8 +26,6 @@ $leads = mysqli_query($conn, "SELECT * FROM enquiries WHERE assigned_to='$uid' O
 <body>
 <div class="container-fluid">
 <div class="row">
-<?php include 'counselor-sidebar.php'; ?>
-<div class="col-md-10 p-4" style="background:#f1f5f9; min-height:100vh;">
 
     <?php include 'counselor-sidebar.php'; ?>
 
@@ -94,7 +91,6 @@ $leads = mysqli_query($conn, "SELECT * FROM enquiries WHERE assigned_to='$uid' O
                 </table>
             </div>
         </div>
-
     </div>
 </div>
 </div>
