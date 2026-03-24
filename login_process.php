@@ -27,6 +27,8 @@ if(mysqli_num_rows($result) == 1){
     }
 
 } else {
-    echo "Invalid Credentials";
+    // ✅ Redirect back to login with error instead of echoing
+    header("Location: login.php?error=invalid");
+    exit();
 }
 ?>
