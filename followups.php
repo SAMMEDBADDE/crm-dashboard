@@ -19,18 +19,20 @@ if(isset($_POST['save_followup'])){
 }
 
 $preSelected = isset($_GET['enquiry_id']) ? $_GET['enquiry_id'] : '';
-
-// ✅ Query runs AFTER post handling so result is always fresh
 $myLeads = mysqli_query($conn, "SELECT enquiry_id, student_name, phone FROM enquiries WHERE assigned_to='$uid'");
 $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM followups f 
     JOIN enquiries e ON f.enquiry_id = e.enquiry_id 
     WHERE e.assigned_to='$uid' ORDER BY f.followup_date ASC");
+$today = date('Y-m-d');
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Follow-Ups</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container-fluid">
@@ -38,16 +40,28 @@ $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM fo
 
     <?php include 'counselor-sidebar.php'; ?>
 
-    <div class="col-md-10 p-4" style="background:#f1f5f9; min-height:100vh;">
-        <h3>Follow-Ups</h3>
+    <div class="col-md-10 p-4">
 
-        <!-- ADD FOLLOWUP FORM -->
+        <!-- PAGE HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm">
+            <div>
+                <h4 class="mb-0"><i class="fa-solid fa-calendar-check me-2 text-warning"></i>Follow-Ups</h4>
+                <small class="text-muted">Schedule and track your follow-ups</small>
+            </div>
+            <span class="badge bg-warning px-3 py-2" style="font-size:13px;">
+                <i class="fa-solid fa-calendar me-1"></i> <?php echo date('l, d M Y'); ?>
+            </span>
+        </div>
+
+        <!-- SCHEDULE FORM -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-dark text-white">Schedule Follow-Up</div>
+            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                <i class="fa-solid fa-calendar-plus"></i> Schedule Follow-Up
+            </div>
             <div class="card-body">
                 <form method="POST">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
                             <label>Select Student</label>
                             <select name="enquiry_id" class="form-select" required>
                                 <option value="">-- Select --</option>
@@ -63,11 +77,11 @@ $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM fo
                                 ?>
                             </select>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-2">
                             <label>Follow-Up Date</label>
                             <input type="date" name="followup_date" class="form-control" required>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-2">
                             <label>Status</label>
                             <select name="status" class="form-select">
                                 <option value="Scheduled">Scheduled</option>
@@ -76,12 +90,14 @@ $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM fo
                                 <option value="Rescheduled">Rescheduled</option>
                             </select>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4">
                             <label>Remarks</label>
                             <input type="text" name="remarks" class="form-control" placeholder="Enter remarks">
                         </div>
-                        <div class="col-md-1 mb-3 d-flex align-items-end">
-                            <button type="submit" name="save_followup" class="btn btn-primary w-100">Save</button>
+                        <div class="col-md-1">
+                            <button type="submit" name="save_followup" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-save"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -90,9 +106,11 @@ $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM fo
 
         <!-- FOLLOWUPS TABLE -->
         <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">All Follow-Ups</div>
+            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                <i class="fa-solid fa-list-check"></i> All Follow-Ups
+            </div>
             <div class="card-body p-0">
-                <table class="table table-bordered table-hover mb-0">
+                <table class="table table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>
@@ -106,21 +124,38 @@ $followupList = mysqli_query($conn, "SELECT f.*, e.student_name, e.phone FROM fo
                     <tbody>
                     <?php
                     $i = 1;
-                    $today = date('Y-m-d');
                     if(mysqli_num_rows($followupList) > 0){
                         while($row = mysqli_fetch_assoc($followupList)){
-                            $highlight = ($row['followup_date'] == $today) ? 'table-warning' : '';
+                            $isToday = ($row['followup_date'] == $today);
+                            $rowStyle = $isToday ? 'style="background:#fffbeb;"' : '';
+                            $badgeColor = match($row['followup_status']){
+                                'Scheduled' => 'primary',
+                                'Done' => 'success',
+                                'Pending' => 'danger',
+                                'Rescheduled' => 'warning',
+                                default => 'secondary'
+                            };
                     ?>
-                        <tr class="<?php echo $highlight; ?>">
+                        <tr <?php echo $rowStyle; ?>>
                             <td><?php echo $i++; ?></td>
-                            <td><?php echo $row['student_name']; ?></td>
-                            <td><?php echo $row['phone']; ?></td>
-                            <td><?php echo $row['followup_date']; ?></td>
-                            <td><span class="badge bg-primary"><?php echo $row['followup_status']; ?></span></td>
+                            <td><strong><?php echo $row['student_name']; ?></strong></td>
+                            <td><i class="fa-solid fa-phone fa-xs text-muted me-1"></i><?php echo $row['phone']; ?></td>
+                            <td>
+                                <?php echo $row['followup_date']; ?>
+                                <?php if($isToday){ ?>
+                                    <span class="badge bg-warning text-dark ms-1" style="font-size:10px;">Today</span>
+                                <?php } ?>
+                            </td>
+                            <td><span class="badge bg-<?php echo $badgeColor; ?>"><?php echo $row['followup_status']; ?></span></td>
                             <td><?php echo $row['remarks']; ?></td>
                         </tr>
                     <?php }} else { ?>
-                        <tr><td colspan="6" class="text-center text-muted py-3">No follow-ups scheduled yet</td></tr>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-5">
+                                <i class="fa-solid fa-calendar-xmark fa-2x mb-2 d-block"></i>
+                                No follow-ups scheduled yet
+                            </td>
+                        </tr>
                     <?php } ?>
                     </tbody>
                 </table>

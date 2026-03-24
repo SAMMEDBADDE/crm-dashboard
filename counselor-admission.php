@@ -7,7 +7,6 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'counselor'){
 include 'db.php';
 $uid = $_SESSION['user_id'];
 
-// Save admission
 if(isset($_POST['save_admission'])){
     $eid = $_POST['enquiry_id'];
     $fees = $_POST['fees'];
@@ -17,7 +16,6 @@ if(isset($_POST['save_admission'])){
     $installment = $_POST['installment'];
     $date = date('Y-m-d');
 
-    // Check if admission already exists
     $check = mysqli_query($conn, "SELECT * FROM admissions WHERE enquiry_id='$eid'");
     if(mysqli_num_rows($check) > 0){
         $error = "Admission already exists for this student!";
@@ -29,21 +27,22 @@ if(isset($_POST['save_admission'])){
     }
 }
 
-// Only counselor's assigned leads
 $enquiries = mysqli_query($conn, "SELECT * FROM enquiries WHERE assigned_to='$uid' AND status != 'Converted'");
-
-// Only counselor's admissions
 $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course_interested 
     FROM admissions a 
     JOIN enquiries e ON a.enquiry_id = e.enquiry_id 
     WHERE e.assigned_to='$uid' 
     ORDER BY a.admission_id DESC");
+$total_admissions = mysqli_num_rows($admissions);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Admission</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container-fluid">
@@ -51,23 +50,39 @@ $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course
 
     <?php include 'counselor-sidebar.php'; ?>
 
-    <div class="col-md-10 p-4" style="background:#f1f5f9; min-height:100vh;">
-        <h3>Admission</h3>
+    <div class="col-md-10 p-4">
+
+        <!-- PAGE HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm">
+            <div>
+                <h4 class="mb-0"><i class="fa-solid fa-graduation-cap me-2 text-success"></i>Admission</h4>
+                <small class="text-muted"><?php echo $total_admissions; ?> admissions converted so far</small>
+            </div>
+            <span class="badge bg-success px-3 py-2" style="font-size:13px;">
+                <i class="fa-solid fa-circle-check me-1"></i> Admission Panel
+            </span>
+        </div>
 
         <?php if(isset($success)){ ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-check"></i> <?php echo $success; ?>
+            </div>
         <?php } ?>
         <?php if(isset($error)){ ?>
-            <div class="alert alert-danger"><?php echo $error; ?></div>
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-xmark"></i> <?php echo $error; ?>
+            </div>
         <?php } ?>
 
-        <!-- ADD ADMISSION FORM -->
+        <!-- FORM -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-dark text-white">Convert Lead to Admission</div>
+            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                <i class="fa-solid fa-user-graduate"></i> Convert Lead to Admission
+            </div>
             <div class="card-body">
                 <form method="POST">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
                             <label>Select Student</label>
                             <select name="enquiry_id" class="form-select" required>
                                 <option value="">-- Select Lead --</option>
@@ -82,15 +97,19 @@ $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course
                                 ?>
                             </select>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-2">
                             <label>Total Fees</label>
                             <input type="number" name="fees" class="form-control" placeholder="e.g. 50000" required>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-2">
                             <label>Fees Paid</label>
                             <input type="number" name="fees_paid" class="form-control" placeholder="e.g. 25000" required>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-1">
+                            <label>Installments</label>
+                            <input type="number" name="installment" class="form-control" placeholder="3">
+                        </div>
+                        <div class="col-md-2">
                             <label>Payment Status</label>
                             <select name="payment_status" class="form-select">
                                 <option value="Pending">Pending</option>
@@ -98,20 +117,18 @@ $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course
                                 <option value="Paid">Paid</option>
                             </select>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <label>Payment Type</label>
+                        <div class="col-md-1">
+                            <label>Pay Type</label>
                             <select name="payment_type" class="form-select">
                                 <option value="Cash">Cash</option>
                                 <option value="Online">Online</option>
                                 <option value="UPI">UPI</option>
                             </select>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <label>Installments</label>
-                            <input type="number" name="installment" class="form-control" placeholder="e.g. 3">
-                        </div>
-                        <div class="col-md-2 mb-3 d-flex align-items-end">
-                            <button type="submit" name="save_admission" class="btn btn-success w-100">🎓 Convert to Admission</button>
+                        <div class="col-md-1">
+                            <button type="submit" name="save_admission" class="btn btn-success w-100">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -120,9 +137,11 @@ $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course
 
         <!-- ADMISSIONS TABLE -->
         <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">My Admissions</div>
+            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                <i class="fa-solid fa-list"></i> My Admissions
+            </div>
             <div class="card-body p-0">
-                <table class="table table-bordered table-hover mb-0">
+                <table class="table table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>
@@ -140,24 +159,45 @@ $admissions = mysqli_query($conn, "SELECT a.*, e.student_name, e.phone, e.course
                     <tbody>
                     <?php
                     $i = 1;
-                    if(mysqli_num_rows($admissions) > 0){
+                    if($total_admissions > 0){
+                        mysqli_data_seek($admissions, 0);
                         while($row = mysqli_fetch_assoc($admissions)){
-                            $badgeColor = $row['payment_status'] == 'Paid' ? 'success' : ($row['payment_status'] == 'Partial' ? 'warning' : 'danger');
+                            $badgeColor = match($row['payment_status']){
+                                'Paid' => 'success',
+                                'Partial' => 'warning',
+                                'Pending' => 'danger',
+                                default => 'secondary'
+                            };
                     ?>
                         <tr>
                             <td><?php echo $i++; ?></td>
-                            <td><?php echo $row['student_name']; ?></td>
-                            <td><?php echo $row['phone']; ?></td>
+                            <td><strong><?php echo $row['student_name']; ?></strong></td>
+                            <td><i class="fa-solid fa-phone fa-xs text-muted me-1"></i><?php echo $row['phone']; ?></td>
                             <td><?php echo $row['course_interested']; ?></td>
-                            <td>₹<?php echo number_format($row['fees']); ?></td>
+                            <td><strong>₹<?php echo number_format($row['fees']); ?></strong></td>
                             <td>₹<?php echo number_format($row['fees_paid']); ?></td>
                             <td><span class="badge bg-<?php echo $badgeColor; ?>"><?php echo $row['payment_status']; ?></span></td>
-                            <td><?php echo $row['payment_type']; ?></td>
+                            <td>
+                                <?php
+                                $typeIcon = match($row['payment_type']){
+                                    'Cash' => 'fa-money-bill',
+                                    'Online' => 'fa-globe',
+                                    'UPI' => 'fa-mobile-screen',
+                                    default => 'fa-credit-card'
+                                };
+                                ?>
+                                <i class="fa-solid <?php echo $typeIcon; ?> me-1 text-muted"></i><?php echo $row['payment_type']; ?>
+                            </td>
                             <td><?php echo $row['installment']; ?></td>
                             <td><?php echo $row['admission_date']; ?></td>
                         </tr>
                     <?php }} else { ?>
-                        <tr><td colspan="10" class="text-center text-muted py-3">No admissions yet</td></tr>
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-5">
+                                <i class="fa-solid fa-graduation-cap fa-2x mb-2 d-block"></i>
+                                No admissions yet
+                            </td>
+                        </tr>
                     <?php } ?>
                     </tbody>
                 </table>
