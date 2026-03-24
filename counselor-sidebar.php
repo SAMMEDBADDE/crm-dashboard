@@ -2,6 +2,9 @@
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+
 <div class="col-md-2 bg-dark text-white p-3" style="min-height:100vh;">
     <h5 class="text-center">Counselor Panel</h5>
     <hr>
@@ -28,7 +31,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="nav-item">
-<a class="nav-link text-white <?php if($currentPage=='counselor-reports.php') echo 'bg-primary'; ?>" href="counselor-reports.php">My Performance</a>
+            <a class="nav-link text-white <?php if($currentPage=='counselor-reports.php') echo 'bg-primary'; ?>" href="counselor-reports.php">My Performance</a>
         </li>
 
         <li class="nav-item">
