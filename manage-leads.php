@@ -66,9 +66,14 @@ $sources = mysqli_query($conn, "SELECT * FROM sources WHERE status='Active'");
                 <h4 class="mb-0"><i class="fa-solid fa-users me-2 text-primary"></i>Manage Leads</h4>
                 <small class="text-muted">Total <?php echo $total; ?> leads in system</small>
             </div>
-            <span class="badge bg-primary px-3 py-2" style="font-size:13px;">
-                <i class="fa-solid fa-list me-1"></i> Lead Management
-            </span>
+           <div class="d-flex gap-2">
+    <a href="import_leads.php" class="btn btn-success">
+        <i class="fa-solid fa-file-import me-1"></i> Import CSV
+    </a>
+    <span class="badge bg-primary px-3 py-2 d-flex align-items-center" style="font-size:13px;">
+        <i class="fa-solid fa-list me-1"></i> Lead Management
+    </span>
+</div>
         </div>
 
         <?php if(isset($success)){ ?>
@@ -102,9 +107,17 @@ $sources = mysqli_query($conn, "SELECT * FROM sources WHERE status='Active'");
                             <input type="text" name="city" class="form-control" placeholder="City">
                         </div>
                         <div class="col-md-2">
-                            <label>Course</label>
-                            <input type="text" name="course" class="form-control" placeholder="Course">
-                        </div>
+    <label>Course</label>
+    <select name="course" class="form-select">
+        <option value="">-- Select Course --</option>
+        <?php
+        $courseList = mysqli_query($conn, "SELECT * FROM courses ORDER BY course_name ASC");
+        while($c = mysqli_fetch_assoc($courseList)){
+            echo "<option value='{$c['course_name']}'>{$c['course_name']}</option>";
+        }
+        ?>
+    </select>
+</div>
                         <div class="col-md-1">
                             <label>Source</label>
                             <select name="source" class="form-select">

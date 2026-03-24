@@ -2,9 +2,7 @@
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+
 
 <div class="col-md-2 bg-dark text-white p-3" style="min-height:100vh;">
     <h5 class="text-center mb-1" style="font-size:15px; font-weight:700; letter-spacing:0.3px;">🎓 CRM System</h5>
@@ -51,13 +49,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </ul>
 
     <!-- LOGOUT AT BOTTOM -->
-    <div style="position:absolute; bottom:20px; left:0; right:0; padding:0 12px;">
-        <a class="nav-link text-danger d-flex align-items-center gap-2 p-2 rounded" 
-           href="login.php"
-           onclick="return confirm('👋 Are you sure you want to logout?\n\nYour session will be ended.\nSee you soon! 😊')"
-           style="font-size:14px; font-weight:600; transition:0.2s;">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </a>
-    </div>
+<div style="position:absolute; bottom:20px; left:0; right:0; padding:0 8px;">
+    <a href="login.php" class="sidebar-logout"
+       onclick="return confirm('👋 Are you sure you want to logout?\n\nYour session will be ended.\nSee you soon! 😊')">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+</div>
 
 </div>

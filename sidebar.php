@@ -2,9 +2,7 @@
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+
 
 <div class="col-md-2 bg-dark text-white p-3" style="min-height:100vh; position:relative;">
     <h5 class="text-center mb-1" style="font-size:15px; font-weight:700; letter-spacing:0.3px;">⚙️ CRM System</h5>
@@ -36,6 +34,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <i class="fa-solid fa-list me-2"></i>Manage List
             </a>
         </li>
+        <li class="nav-item">
+    <a class="nav-link text-white <?php if($currentPage=='import_leads.php') echo 'bg-primary'; ?>" href="import_leads.php">
+        <i class="fa-solid fa-file-import me-2"></i>Import Leads
+    </a>
+</li>
 
         <li class="nav-item">
             <a class="nav-link text-white <?php if($currentPage=='reports.php') echo 'bg-primary'; ?>" href="reports.php">
@@ -48,7 +51,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <i class="fa-solid fa-calendar-check me-2"></i>Follow-Ups
             </a>
         </li>
-
+        <li class="nav-item">
+    <a class="nav-link text-white <?php if($currentPage=='manage-courses.php') echo 'bg-primary'; ?>" href="manage-courses.php">
+        <i class="fa-solid fa-book me-2"></i>Manage Courses
+    </a>
+</li>
         <li class="nav-item">
             <a class="nav-link text-white <?php if($currentPage=='admission.php') echo 'bg-primary'; ?>" href="admission.php">
                 <i class="fa-solid fa-graduation-cap me-2"></i>Admission
