@@ -5,7 +5,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 
 <div class="col-md-2 bg-dark text-white p-3" style="min-height:100vh;">
-    <h5 class="text-center mb-1" style="font-size:15px; font-weight:700; letter-spacing:0.3px;">🎓 CRM System</h5>
+    <h5 class="text-center mb-1" style="font-size:15px; font-weight:700; letter-spacing:0.3px;">🎓 CRM Counselor</h5>
     <p class="text-center text-muted" style="font-size:11px; margin-bottom:16px;">Counselor Panel</p>
     <hr class="mt-0">
     <ul class="nav flex-column">
