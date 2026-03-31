@@ -1,6 +1,5 @@
 <?php
 include 'db.php';
-
 $enquiry_id = $_POST['enquiry_id'];
 $date = $_POST['followup_date'];
 $status = $_POST['followup_status'];
